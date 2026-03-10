@@ -200,8 +200,21 @@ namespace Meridian59 { namespace Ogre
    {
       if (CLRString::Equals(e->PropertyName, RoomInfo::PROPNAME_ROOMNAME))
       {
-         RoomValue->setText(
-            StringConvert::CLRToCEGUI(OgreClient::Singleton->Data->RoomInformation->RoomName));
+         CLRString^ roomName = OgreClient::Singleton->Data->RoomInformation->RoomName;
+
+         RoomValue->setText(StringConvert::CLRToCEGUI(roomName));
+
+         // Update window title with room name for external tools (e.g. LevelCalc navigation)
+         if (OgreClient::Singleton->RenderWindowHandle)
+         {
+            ::Ogre::String ostr;
+            if (roomName != nullptr && roomName->Length > 0)
+               ostr = "Meridian 59 --- " + StringConvert::CLRToOgre(roomName);
+            else
+               ostr = "Meridian 59";
+
+            SetWindowTextA(OgreClient::Singleton->RenderWindowHandle, ostr.c_str());
+         }
       }
    };
 
